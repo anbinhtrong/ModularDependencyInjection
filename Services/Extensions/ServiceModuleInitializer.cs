@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using Autofac;
-
+using Services.Repository;
 
 namespace Services.Extensions
 {
@@ -11,17 +11,7 @@ namespace Services.Extensions
     {
         public virtual ContainerBuilder Register(ContainerBuilder builder)
         {
-            var assembly = GetType().Assembly;
-
-            builder.RegisterAssemblyTypes(assembly)
-                .Where(
-                    x =>
-                        x.Name.EndsWith("Repository", StringComparison.OrdinalIgnoreCase) ||
-                        x.Name.EndsWith("Factory", StringComparison.OrdinalIgnoreCase) ||
-                        x.Name.EndsWith("Service", StringComparison.OrdinalIgnoreCase))
-                .AsImplementedInterfaces()
-                .SingleInstance()
-                .PropertiesAutowired();            
+            builder.RegisterType<MessageRepository>().As<IMessageRepository>().InstancePerLifetimeScope();
             return builder;
         }
     }
