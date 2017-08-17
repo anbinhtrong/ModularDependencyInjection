@@ -7,7 +7,7 @@ using Services.Repository;
 namespace Services.Extensions
 {
     
-    public class ServiceModuleInitializer : IModuleInitializer
+    public class ServiceModuleInitializer : IAutofacModuleInitializer
     {
         public virtual ContainerBuilder Register(ContainerBuilder builder)
         {

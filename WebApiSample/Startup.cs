@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Services.Extensions;
+using WebApiSample.Extensions;
 
 namespace WebApiSample
 {
@@ -35,7 +36,12 @@ namespace WebApiSample
 
             // Add Autofac
             var containerBuilder = new ContainerBuilder();
-            containerBuilder.RegisterModule<DefaultModule>();
+            var modules = AutofacConfiguration.GetModuleInitializers();
+            foreach(var module in modules)
+            {
+                module.Register(containerBuilder);
+            }
+            //containerBuilder.RegisterModule<DefaultModule>();
             containerBuilder.Populate(services);
             var container = containerBuilder.Build();
             return new AutofacServiceProvider(container);
