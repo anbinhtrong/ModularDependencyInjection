@@ -11,21 +11,24 @@ namespace WebApiSample.Extensions
 {
     public class AutofacConfiguration
     {
-        public static List<IAutofacModuleInitializer> GetModuleInitializers()
+        public static List<IAutofacDiInitializer> GetModuleInitializers()
         {
-            var binFolder = new DirectoryInfo(AppContext.BaseDirectory);
-            //var searchRegex = new Regex("*.dll", RegexOptions.IgnoreCase);
+            var binFolder = new DirectoryInfo(AppContext.BaseDirectory);            
             var assemblyFilenames = binFolder.GetFileSystemInfos().Where(x => x.Name.Contains(".dll"));
-            var moduleInitializerType = typeof(IAutofacModuleInitializer);
-            var result = new List<IAutofacModuleInitializer>();
+            var moduleInitializerType = typeof(IAutofacDiInitializer);
+            var result = new List<IAutofacDiInitializer>();
             foreach (var assemblyFileName in assemblyFilenames)
             {
                 var assembly = Assembly.Load(new AssemblyName(Path.GetFileNameWithoutExtension(assemblyFileName.Name)));
-                var initializerType = assembly.GetTypes().FirstOrDefault(x => moduleInitializerType.IsAssignableFrom(x));
-                if(initializerType != null && initializerType != moduleInitializerType)
+                var initializerTypes = assembly.GetTypes().Where(x => moduleInitializerType.IsAssignableFrom(x) && x != moduleInitializerType).ToList();
+                foreach (var initializerType in initializerTypes)
                 {
-                    result.Add(Activator.CreateInstance(initializerType) as IAutofacModuleInitializer);
-                }                
+                    if (initializerType != null)
+                    {
+                        result.Add(Activator.CreateInstance(initializerType) as IAutofacDiInitializer);
+                    }
+                }
+                             
             }
             return result;
         }

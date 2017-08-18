@@ -5,7 +5,7 @@ using Autofac;
 
 namespace Services.Extensions
 {
-    public interface IAutofacModuleInitializer
+    public interface IAutofacDiInitializer
     {
         ContainerBuilder Register(ContainerBuilder builder);
     }
